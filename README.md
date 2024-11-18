@@ -3,7 +3,7 @@
 A todo file format and a summary script
 
 ```bash
-# format of a todo file
+# an example of a todo file
 $ cat todo.txt
 2024-11-18
 eat food
@@ -42,5 +42,5 @@ optional arguments:
   -h, --help            show this help message and exit
   -a, --all             print all todo items
   -i file, --input file
-                        location of todo file
+                        default: todo.txt, path to the todo file
 ```
