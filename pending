@@ -17,12 +17,12 @@ def main():
 		date_neg = re.compile("[0-9]+-[0-9]+-[0-9]+")
 		completion_neg = re.compile("^\\[OK]")
 
-		date_format = "%Y-%m-%d"
-		line_max = 45
-
 		# (date, time)
 		pending = []
 		completed = []
+
+		date_format = "%Y-%m-%d"
+		line_max = 45
 
 		__today = datetime.today()
 		today = datetime(__today.year, __today.month, __today.day)
@@ -52,13 +52,20 @@ def main():
 		print("\033[0;0m", end="")
 
 		# completed
-		print()
+		printed = False
 		print("\033[0;32m", end="")
 		for task in completed:
 			if print_today and task[0] < today:
 				break
+
+			# if any completed tasks need printing, print newline first
+			if not printed:
+				print()
+
+			printed = True
 			print("  ", task[0].strftime(date_format), " ", task[1][:line_max], sep="")
 		print("\033[0;0m", end="")
+
 		print()
 
 if __name__ == "__main__":
