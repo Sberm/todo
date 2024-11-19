@@ -35,9 +35,15 @@ def main():
 
 			line = line.strip()
 
+			# get the date and go to the next line
 			if date_neg.search(line):
 				date_tmp = datetime.strptime(line, date_format)
-			elif completion_neg.search(line):
+				continue
+
+			if print_today and date_tmp != today:
+				continue
+
+			if completion_neg.search(line):
 				completed.append((date_tmp, line))
 			else:
 				pending.append((date_tmp, line))
