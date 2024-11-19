@@ -44,3 +44,8 @@ optional arguments:
   -i file, --input file
                         default: todo.txt, path to the todo file
 ```
+
+Use with `watch` for continuous updates
+```bash
+watch -n 0.5 -d --color ./pending
+```
