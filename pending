@@ -48,6 +48,11 @@ def main():
 			else:
 				pending.append((date_tmp, line))
 
+		# avoid extra newlines
+		if len(pending) == 0 and len(completed) == 0:
+			print("No todo items found")
+			return
+
 		# pending (not completed)
 		print()
 		print("\033[0;31m", end="")
