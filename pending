@@ -5,17 +5,20 @@ from datetime import datetime
 
 def main():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-a", "--all", default = False, action="store_true", help = "print all todo items")
+	parser.add_argument("-a", "--all", default = False, action = "store_true", help = "print all tasks")
 	parser.add_argument("-i", "--input", default = "todo.txt", help = "default: todo.txt, path to the todo file", metavar = "file")
+	parser.add_argument("-p", "--pending", default = False, action = "store_true", help = "only show pending tasks")
 	args = parser.parse_args()
 
-	print_today = not args.all
 	todo_file = args.input
+	only_pending = args.pending
+	# -p prints all pending tasks
+	print_today = not (args.all or only_pending)
 
 	with open(todo_file, "r") as f:
 		# regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
-		date_neg = re.compile("[0-9]+-[0-9]+-[0-9]+")
-		completion_neg = re.compile("^\\[OK]")
+		date_pat = re.compile("[0-9]+-[0-9]+-[0-9]+")
+		completion_pat = re.compile("^\\[OK]")
 
 		# (date, time)
 		pending = []
@@ -36,15 +39,16 @@ def main():
 			line = line.strip()
 
 			# get the date and go to the next line
-			if date_neg.search(line):
+			if date_pat.search(line):
 				date_tmp = datetime.strptime(line, date_format)
 				continue
 
 			if print_today and date_tmp != today:
 				continue
 
-			if completion_neg.search(line):
-				completed.append((date_tmp, line))
+			if completion_pat.search(line):
+				if not only_pending:
+					completed.append((date_tmp, line))
 			else:
 				pending.append((date_tmp, line))
 
