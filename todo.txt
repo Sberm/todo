@@ -1,8 +1,14 @@
 2024-11-18
-eat food
 read Shakespeare
 write an essay
 [OK]drink water
+
+# This is a comment. This comment as well as empty lines are ignored.
+go shopping
+
+eat food
+  # You better eat some food, this will make you feel so much better.
+  # Such as grapes, mangoes, and apples
 
 2024-11-6
 [OK]pay rent
