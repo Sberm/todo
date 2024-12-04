@@ -4,84 +4,84 @@ import argparse
 from datetime import datetime
 
 def main():
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-a", "--all", default = False, action = "store_true", help = "print all tasks")
-	parser.add_argument("-i", "--input", default = "todo.txt", help = "default: todo.txt, path to the todo file", metavar = "file")
-	parser.add_argument("-p", "--pending", default = False, action = "store_true", help = "only show pending tasks")
-	args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-a", "--all", default = False, action = "store_true", help = "print all tasks")
+    parser.add_argument("-i", "--input", default = "todo.txt", help = "default: todo.txt, path to the todo file", metavar = "file")
+    parser.add_argument("-p", "--pending", default = False, action = "store_true", help = "only show pending tasks")
+    args = parser.parse_args()
 
-	todo_file = args.input
-	only_pending = args.pending
-	# -p prints all pending tasks
-	print_today = not (args.all or only_pending)
+    todo_file = args.input
+    only_pending = args.pending
+    # -p prints all pending tasks
+    print_today = not (args.all or only_pending)
 
-	with open(todo_file, "r") as f:
-		# regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
-		date_pat = re.compile("[0-9]+-[0-9]+-[0-9]+")
-		completion_pat = re.compile("^\\[OK]")
+    with open(todo_file, "r") as f:
+        # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
+        date_pat = re.compile("[0-9]+-[0-9]+-[0-9]+")
+        completion_pat = re.compile("^\\[OK]")
 
-		# (date, time)
-		pending = []
-		completed = []
+        # (date, time)
+        pending = []
+        completed = []
 
-		date_format = "%Y-%m-%d"
-		line_max = 45
+        date_format = "%Y-%m-%d"
+        line_max = 45
 
-		__today = datetime.today()
-		today = datetime(__today.year, __today.month, __today.day)
-		date_tmp = today
-		lines = f.readlines()
+        __today = datetime.today()
+        today = datetime(__today.year, __today.month, __today.day)
+        date_tmp = today
+        lines = f.readlines()
 
-		for line in lines:
-			if line.isspace():
-				continue
+        for line in lines:
+            if line.isspace():
+                continue
 
-			line = line.strip()
+            line = line.strip()
 
-			# get the date and go to the next line
-			if date_pat.search(line):
-				date_tmp = datetime.strptime(line, date_format)
-				continue
+            # get the date and go to the next line
+            if date_pat.search(line):
+                date_tmp = datetime.strptime(line, date_format)
+                continue
 
-			if print_today and date_tmp != today:
-				continue
+            if print_today and date_tmp != today:
+                continue
 
-			if completion_pat.search(line):
-				if not only_pending:
-					completed.append((date_tmp, line))
-			else:
-				pending.append((date_tmp, line))
+            if completion_pat.search(line):
+                if not only_pending:
+                    completed.append((date_tmp, line))
+            else:
+                pending.append((date_tmp, line))
 
-		# avoid extra newlines
-		if len(pending) == 0 and len(completed) == 0:
-			print("No todo items found")
-			return
+        # avoid extra newlines
+        if len(pending) == 0 and len(completed) == 0:
+            print("No todo items found")
+            return
 
-		# pending (not completed)
-		print()
-		print("\033[0;31m", end="")
-		for task in pending:
-			if print_today and task[0] < today:
-				break
-			print("  ", task[0].strftime(date_format), " ", task[1][:line_max], sep="")
-		print("\033[0;0m", end="")
+        # pending (not completed)
+        print()
+        print("\033[0;31m", end="")
+        for task in pending:
+            if print_today and task[0] < today:
+                break
+            print("  ", task[0].strftime(date_format), " ", task[1][:line_max], sep="")
+        print("\033[0;0m", end="")
 
-		# completed
-		printed = False
-		print("\033[0;32m", end="")
-		for task in completed:
-			if print_today and task[0] < today:
-				break
+        # completed
+        printed = False
+        print("\033[0;32m", end="")
+        for task in completed:
+            if print_today and task[0] < today:
+                break
 
-			# if any completed tasks need printing, print newline first
-			if not printed:
-				print()
+            # if any completed tasks need printing, print newline first
+            if not printed:
+                print()
 
-			printed = True
-			print("  ", task[0].strftime(date_format), " ", task[1][:line_max], sep="")
-		print("\033[0;0m", end="")
+            printed = True
+            print("  ", task[0].strftime(date_format), " ", task[1][:line_max], sep="")
+        print("\033[0;0m", end="")
 
-		print()
+        print()
 
 if __name__ == "__main__":
-	main()
+    main()
