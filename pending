@@ -2,13 +2,22 @@
 import re
 import argparse
 from datetime import datetime
+from sys import exit
+
+VERSION = r"0.0.1"
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-a", "--all", default = False, action = "store_true", help = "print all tasks")
     parser.add_argument("-i", "--input", default = "todo.txt", help = "default: todo.txt, path to the todo file", metavar = "file")
     parser.add_argument("-p", "--pending", default = False, action = "store_true", help = "only show pending tasks")
+    parser.add_argument("-v", "--version", default = False, action = "store_true", help = "print current version")
+
     args = parser.parse_args()
+
+    if args.version:
+        print(f"pending version {VERSION}")
+        exit(0)
 
     todo_file = args.input
     only_pending = args.pending
