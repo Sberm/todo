@@ -1,4 +1,4 @@
-2024-11-18
+# from the start to the first specified date will be viewed as today
 read Shakespeare
 write an essay
 [OK]drink water
@@ -9,6 +9,10 @@ go shopping
 eat food
   # You better eat some food, this will make you feel so much better.
   # Such as grapes, mangoes, and apples
+
+2024-11-18
+[OK]read a book
+install the curtains
 
 2024-11-6
 [OK]pay rent
