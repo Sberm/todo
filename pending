@@ -41,16 +41,14 @@ def main():
             # get the date and go to the next line
             if date_pat.search(line):
                 date_tmp = datetime.strptime(line, date_format)
-                continue
-
-            if print_today and date_tmp != today:
-                continue
-
-            if completion_pat.search(line):
-                if not only_pending:
-                    completed.append((date_tmp, line))
             else:
-                pending.append((date_tmp, line))
+                if print_today and date_tmp != today:
+                    continue
+
+                if completion_pat.search(line) and not only_pending:
+                    completed.append((date_tmp, line))
+                else:
+                    pending.append((date_tmp, line))
 
         # avoid extra newlines
         if len(pending) == 0 and len(completed) == 0:
