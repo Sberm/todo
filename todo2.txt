@@ -1,0 +1,14 @@
+# use ./pending -i todo2.txt to run this todo file
+
+multi line \
+todo item is pretty freaking cool,\
+ isn't it?
+
+buy a new knife
+run 1000 km to lose some weight
+  # make sure to drink enough water!
+  # otherwise I might get heatstroke
+	# especially during the summer
+
+
+  [OK] finish the homework from history class 

@@ -26,25 +26,27 @@ def main():
     with open(todo_file, "r") as f:
         # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
         date_pat = re.compile("[0-9]+-[0-9]+-[0-9]+")
-        completion_pat = re.compile("^\\[OK]")
+        completion_pat = re.compile("^[ \t]*\\[OK]")
+        comment_pat = re.compile("^[ \t]*#")
 
         # (date, time)
         pending = []
         completed = []
 
         date_format = "%Y-%m-%d"
-        line_max = 45
 
         __today = datetime.today()
         today = datetime(__today.year, __today.month, __today.day)
         date_tmp = today
+
         lines = f.readlines()
+        append = ""
 
         for line in lines:
             if line.isspace():
                 continue
 
-            line = line.strip()
+            line = line.strip("\n\r")
 
             # get the date and go to the next line
             if date_pat.search(line):
@@ -55,8 +57,18 @@ def main():
                     continue
 
                 # skip comments
-                if line[0] == '#':
+                if comment_pat.search(line):
                     continue
+
+                # multi-line
+                if line[-1] == '\\':
+                    append += line[:-1] # exclude the backslash
+                    continue
+
+                # first non-backslash-ended item: build the result
+                if append != "":
+                    line = append + line
+                    append = ""
 
                 if completion_pat.search(line):
                     if not only_pending:
@@ -75,7 +87,7 @@ def main():
         for task in pending:
             if print_today and task[0] < today:
                 break
-            print("  ", task[0].strftime(date_format), " ", task[1][:line_max], sep="")
+            print("  ", task[0].strftime(date_format), " ", task[1], sep="")
         print("\033[0;0m", end="")
 
         # completed
@@ -90,7 +102,7 @@ def main():
                 print()
 
             printed = True
-            print("  ", task[0].strftime(date_format), " ", task[1][:line_max], sep="")
+            print("  ", task[0].strftime(date_format), " ", task[1], sep="")
         print("\033[0;0m", end="")
 
         print()

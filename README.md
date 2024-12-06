@@ -1,6 +1,34 @@
 ## todo
 
-A todo file format and a summary script. Check out `todo.txt` for examples.
+A todo file format and a summary script. Check out `todo.txt` and `todo2.txt` for examples.
+
+grammar:
+
+```todo
+# this is a comment that `pending` will ignore
+
+# dates suit as a separator for todo items. `pending` with no option will only
+# collect the pending and finished todo items of today
+
+# from the start to the first specified date will be viewed as today, and will
+always be shown when running pending.
+
+this is a global todo item that will always be shown
+
+# This is a date and serves as a separator for TODO items. When running
+# `pending`, this will be prepended to a TODO item.
+2024-11-09
+drink milk
+eat cheese burgers
+
+2024-11-18
+Don't laugh at mom's jokes
+Go to the court, remember to take the pen
+# this is a multi-line todo item
+Tell Uncle Jerome to bring the coffee cup so that no harm will come to the poor \
+insects from South America, which I bought for 700 dollars per gram, along with \
+their colony made from their saliva.
+```
 
 ```bash
 todo $ cat todo.txt
