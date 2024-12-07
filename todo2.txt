@@ -12,3 +12,6 @@ run 1000 km to lose some weight
 
 
   [OK] finish the homework from history class 
+
+# this is a half completion
+[O] A really really difficult task that you consider half-completed

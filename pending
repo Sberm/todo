@@ -26,7 +26,8 @@ def main():
     with open(todo_file, "r") as f:
         # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
         date_pat = re.compile("[0-9]+-[0-9]+-[0-9]+")
-        completion_pat = re.compile("^[ \t]*\\[OK]")
+        completion_pat = re.compile("^[ \t]*\[OK]")
+        half_completion_pat = re.compile("^[ \t]*\[O]")
         comment_pat = re.compile("^[ \t]*#")
 
         # (date, time)
@@ -87,7 +88,14 @@ def main():
         for task in pending:
             if print_today and task[0] < today:
                 break
-            print("  ", task[0].strftime(date_format), " ", task[1], sep="")
+            half_completion_pos = half_completion_pat.search(task[1])
+            if half_completion_pos:
+                print("  ", task[0].strftime(date_format), " ",
+                      task[1][:half_completion_pos.start()] + "\033[0;32m" + "[O]"
+                      + "\033[0;31m" + task[1][half_completion_pos.end():],
+                      sep="")
+            else:
+                print("  ", task[0].strftime(date_format), " ", task[1], sep="")
         print("\033[0;0m", end="")
 
         # completed
