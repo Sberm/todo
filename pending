@@ -25,7 +25,7 @@ def main():
 
     with open(todo_file, "r") as f:
         # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
-        date_pat = re.compile("[0-9]+-[0-9]+-[0-9]+")
+        date_pat = re.compile("^[0-9]+-[0-9]+-[0-9]+")
         completion_pat = re.compile("^[ \t]*\[OK]")
         half_completion_pat = re.compile("^[ \t]*\[O]")
         comment_pat = re.compile("^[ \t]*#")
