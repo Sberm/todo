@@ -85,6 +85,7 @@ def main():
         # pending (not completed)
         print()
         print("\033[0;31m", end="")
+
         for task in pending:
             if print_today and task[0] < today:
                 break
@@ -96,11 +97,13 @@ def main():
                       sep="")
             else:
                 print("  ", task[0].strftime(date_format), " ", task[1], sep="")
+
         print("\033[0;0m", end="")
 
         # completed
         printed = False
         print("\033[0;32m", end="")
+
         for task in completed:
             if print_today and task[0] < today:
                 break
@@ -111,6 +114,7 @@ def main():
 
             printed = True
             print("  ", task[0].strftime(date_format), " ", task[1], sep="")
+
         print("\033[0;0m", end="")
 
         print()
