@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 from sys import exit
 
-VERSION = r"0.0.1"
+VERSION = r"0.0.2"
 
 def main():
     parser = argparse.ArgumentParser()
