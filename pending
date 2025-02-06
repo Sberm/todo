@@ -54,6 +54,8 @@ def main():
                 date_tmp = datetime.strptime(line, date_format)
             else:
                 # only print today's todo items, skip
+                # why continue but not break: today's date can come later than the passed days if
+                # user is not careful
                 if print_today and date_tmp != today:
                     continue
 
