@@ -21,7 +21,7 @@ def main():
 
     todo_file = args.input
     only_pending = args.pending
-    print_today = not (args.all or only_pending)
+    print_today = not args.all
 
     with open(todo_file, "r") as f:
         # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
