@@ -25,10 +25,11 @@ def main():
 
     with open(todo_file, "r") as f:
         # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
-        date_pat = re.compile(r"^[0-9]+-[0-9]+-[0-9]+")
-        completion_pat = re.compile(r"^[ \t]*\[OK\]")
-        half_completion_pat = re.compile(r"^[ \t]*\[O\]")
-        comment_pat = re.compile(r"^[ \t]*#")
+        date_pat = re.compile(r"^([0-9]+-[0-9]+-[0-9]+).*")
+        completion_pat = re.compile(r"^\[OK\]")
+        half_completion_pat = re.compile(r"^\[O\]")
+        comment_pat = re.compile(r"#")
+        remove_st_whsp_pat = re.compile(r"^[ \t]*(.*)")
 
         # (date, time)
         pending = []
@@ -47,11 +48,12 @@ def main():
             if line.isspace():
                 continue
 
-            line = line.strip("\n\r")
+            line_whsp = remove_st_whsp_pat.match(line)
+            line = line_whsp.group(1).strip("\n\r")
 
             # get the date and go to the next line
-            if date_pat.search(line):
-                date_tmp = datetime.strptime(line, date_format)
+            if date_match := date_pat.match(line):
+                date_tmp = datetime.strptime(date_match.group(1), date_format)
             else:
                 # only print today's todo items, skip
                 # why continue but not break: today's date can come later than the passed days if
@@ -60,7 +62,7 @@ def main():
                     continue
 
                 # skip comments
-                if comment_pat.search(line):
+                if comment_pat.match(line):
                     continue
 
                 # multi-line
@@ -69,11 +71,11 @@ def main():
                     continue
 
                 # first non-backslash-ended item: build the result
-                if append != "":
+                if len(append) != 0:
                     line = append + line
                     append = ""
 
-                if completion_pat.search(line):
+                if completion_pat.match(line):
                     if not only_pending:
                         completed.append((date_tmp, line))
                 else:
@@ -91,12 +93,10 @@ def main():
         for task in pending:
             if print_today and task[0] < today:
                 break
-            half_completion_pos = half_completion_pat.search(task[1])
+            half_completion_pos = half_completion_pat.match(task[1])
             if half_completion_pos:
                 print("  ", task[0].strftime(date_format), " ",
-                      task[1][:half_completion_pos.start()] + "\033[0;32m" + "[O]"
-                      + "\033[0;31m" + task[1][half_completion_pos.end():],
-                      sep="")
+                      "\033[0;32m" + "[O]" + "\033[0;31m" + task[1][3:], sep="")
             else:
                 print("  ", task[0].strftime(date_format), " ", task[1], sep="")
 
@@ -118,7 +118,6 @@ def main():
             print("  ", task[0].strftime(date_format), " ", task[1], sep="")
 
         print("\033[0;0m", end="")
-
         print()
 
 if __name__ == "__main__":

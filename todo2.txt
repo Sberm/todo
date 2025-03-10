@@ -1,8 +1,14 @@
 # use ./pending -i todo2.txt to run this todo file
 
 multi line \
-todo item is pretty freaking cool,\
- isn't it?
+todo item is pretty freaking cool, \
+isn't it?
+
+[OK] the whitespace at the start of a \
+     line is ignored, which makes better \
+     formatting
+
+	2025-3-8 # same with dates
 
 buy a new knife
 run 1000 km to lose some weight
@@ -10,8 +16,15 @@ run 1000 km to lose some weight
   # otherwise I might get heatstroke
 	# especially during the summer
 
+	write the thesis
+	feed my dog some red meat
 
-  [OK] finish the homework from history class 
+# 
+    [OK] there shouldn't be any whitespace at the start of this line
+  [O] there shouldn't be any whitespace at the start of this line either
 
 # this is a half completion
 [O] A really really difficult task that you consider half-completed
+
+2025-3-7 # Can you add random things after the date? of course!
+[OK] Say Hi to my neighbors
