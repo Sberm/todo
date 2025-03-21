@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 from sys import exit
 
-VERSION = r"0.0.3"
+VERSION = r"0.0.4"
 
 def main():
     parser = argparse.ArgumentParser()
@@ -12,6 +12,7 @@ def main():
     parser.add_argument("-i", "--input", default = "todo.txt", help = "default: todo.txt, path to the todo file", metavar = "file")
     parser.add_argument("-p", "--pending", default = False, action = "store_true", help = "only show pending tasks")
     parser.add_argument("-v", "--version", default = False, action = "store_true", help = "print current version")
+    parser.add_argument("-d", "--date", default = False, action = "store_true", help = "print dates")
 
     args = parser.parse_args()
 
@@ -22,6 +23,7 @@ def main():
     todo_file = args.input
     only_pending = args.pending
     print_today = not args.all
+    print_date = args.date
 
     with open(todo_file, "r") as f:
         # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
@@ -92,11 +94,14 @@ def main():
             if print_today and task[0] < today:
                 break
             half_completion_pos = half_completion_pat.match(task[1])
+            s = "  "
+            if print_date:
+                s += f"{task[0].strftime(date_format)} "
             if half_completion_pos:
-                print("  ", task[0].strftime(date_format), " ",
-                      "\033[0;32m" + "[O]" + "\033[0;31m" + task[1][3:], sep="")
+                s += "\033[0;32m" + "[O]" + "\033[0;31m" + task[1][3:]
             else:
-                print("  ", task[0].strftime(date_format), " ", task[1], sep="")
+                s += task[1]
+            print(s)
 
         print("\033[0;0m", end="")
 
@@ -113,7 +118,11 @@ def main():
                 print()
 
             printed = True
-            print("  ", task[0].strftime(date_format), " ", task[1], sep="")
+            s = "  "
+            if print_date:
+                s += f"{task[0].strftime(date_format)} "
+            s += f"{task[1]}"
+            print(s)
 
         print("\033[0;0m", end="")
         print()

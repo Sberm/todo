@@ -1,0 +1,13 @@
+# from the start to the first specified date will be viewed as today,
+and will always be shown when running pending.
+
+this is a global todo item that will always be shown
+[OK]this is a completed global todo item
+
+2024-11-18
+Don't laugh at mom's jokes
+Go to the court, remember to take the pen
+# this is a multi-line todo item
+Tell Uncle Jerome to bring the coffee cup so that no harm will come to the poor \
+insects from South America, which I bought for 700 dollars per gram, along with \
+their colony made from their saliva.
