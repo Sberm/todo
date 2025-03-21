@@ -48,5 +48,5 @@ their colony made from their saliva.
 
 Use with `watch` for continuous updates
 ```bash
-watch -n 0.5 -d --color ./pending
+watch -n 0.5 -d --color pending
 ```
