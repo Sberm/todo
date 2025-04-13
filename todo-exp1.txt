@@ -3,10 +3,10 @@ this is a todo item
 [OK]also an item, but it spans multiple lines, \
     so it can store more information
 
-# this is a comment that `pending` will ignore
+# this is a comment that `pend` will ignore
 
 2024-11-09
 # dates like '2024-12-01' suit as a separator for todo items.
-# `pending` with no option will only collect the items of today
+# `pend` with no option will only collect the items of today
 drink milk
 eat cheese burgers

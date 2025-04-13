@@ -1,4 +1,4 @@
-# use ./pending -i todo2.txt to run this todo file
+# use ./pend -i todo2.txt to run this todo file
 
 The behavior is correct if this line suddenly st#ops
 

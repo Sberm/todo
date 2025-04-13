@@ -1,5 +1,5 @@
 # from the start to the first specified date will be viewed as today,
-and will always be shown when running pending.
+and will always be shown when running pend.
 
 this is a global todo item that will always be shown
 [OK]this is a completed global todo item

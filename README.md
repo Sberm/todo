@@ -12,7 +12,7 @@ requirement: have python3 installed
 
 ### Usage
 
-run `pending -h` for command line options
+run `pend -h` for command line options
 
 ### Examples:
 
@@ -23,16 +23,16 @@ this is a todo item
 [OK]also an item, but it spans multiple lines, \
     so it can store more information
 
-# this is a comment that `pending` will ignore
+# this is a comment that `pend` will ignore
 
 2024-11-09
-# dates like '2024-12-01' suit as a separator for todo items. `pending` with no option will only collect the items of today
+# dates like '2024-12-01' suit as a separator for todo items. `pend` with no option will only collect the items of today
 drink milk
 eat cheese burgers
 
 $ cat todo-exp2.txt
 # from the start to the first specified date will be viewed as today,
-and will always be shown when running pending.
+and will always be shown when running pend.
 
 this is a global todo item that will always be shown
 [OK]this is a completed global todo item
@@ -48,5 +48,5 @@ their colony made from their saliva.
 
 Use with `watch` for continuous updates
 ```bash
-watch -n 0.5 -d --color pending
+watch -n 0.5 -d --color pend
 ```

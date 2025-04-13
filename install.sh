@@ -1,2 +1,2 @@
 #!/bin/sh
-sudo install pending /usr/local/bin
+sudo install pend /usr/local/bin
