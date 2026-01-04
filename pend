@@ -54,11 +54,11 @@ def main():
     append = ""
 
     for line in lines:
-        line.lstrip('\t ')
-        line.strip("\n\r")
+        line = line.strip("\n\r")
 
         first_hash = line.find('#')
-        line = line[:first_hash]
+        if first_hash != -1:
+            line = line[:first_hash]
 
         if len(line) == 0 or line.isspace():
             continue
