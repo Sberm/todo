@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 from sys import exit
 
-VERSION = r"0.0.5"
+VERSION = r"0.0.6"
 
 def main():
     parser = argparse.ArgumentParser()
@@ -13,6 +13,7 @@ def main():
     parser.add_argument("-p", "--pending", default = False, action = "store_true", help = "only show pending tasks")
     parser.add_argument("-v", "--version", default = False, action = "store_true", help = "print current version")
     parser.add_argument("-d", "--date", default = False, action = "store_true", help = "print dates")
+    parser.add_argument("-c", "--complete", default = False, action = "store_true", help = "only show completed tasks")
 
     args = parser.parse_args()
 
@@ -24,20 +25,18 @@ def main():
     only_pending = args.pending
     print_today = not args.all
     print_date = args.date
-    f = None
+    only_complete = args.complete
 
+    f = None
     try:
         f = open(todo_file, "r")
     except:
         print(f"failed to open todo file \"{todo_file}\"")
         exit(1)
 
-    # regex for date (TODO: Add length restrictions, for example [0-9]{4} or sth)
-    date_pat = re.compile(r"^([0-9]+-[0-9]+-[0-9]+).*$")
-    completion_pat = re.compile(r"^\[OK\]")
-    half_completion_pat = re.compile(r"^\[O\]")
-    rmv_st_whsp_pat = re.compile(r"^[ \t]*(.*)$")
-    rmv_cmt_pat = re.compile(r"^([^#]*)#.*$")
+    date_pat = re.compile(r"^([0-9]{4,5}-[0-9]{1,2}-[0-9]{1,2}).*$")
+    comp_pre = '[OK]'
+    half_comp_pre = '[O]'
 
     # (date, time)
     pending = []
@@ -55,10 +54,11 @@ def main():
     append = ""
 
     for line in lines:
-        line_whsp = rmv_st_whsp_pat.match(line)
-        line = line_whsp.group(1).strip("\n\r")
-        if line_cmt := rmv_cmt_pat.match(line):
-            line = line_cmt.group(1)
+        line.lstrip('\t ')
+        line.strip("\n\r")
+
+        first_hash = line.find('#')
+        line = line[:first_hash]
 
         if len(line) == 0 or line.isspace():
             continue
@@ -83,11 +83,12 @@ def main():
                 line = append + line
                 append = ""
 
-            if completion_pat.match(line):
+            if line.startswith(comp_pre):
                 if not only_pending:
                     completed.append((date_tmp, line))
             else:
-                pending.append((date_tmp, line))
+                if not only_complete:
+                    pending.append((date_tmp, line))
 
     # avoid extra newlines
     if len(pending) == 0 and len(completed) == 0:
@@ -97,26 +98,23 @@ def main():
     # pending (not completed)
     print()
     print("\033[0;31m", end="")
-
     for task in pending:
         if print_today and task[0] < today:
             break
-        half_completion_pos = half_completion_pat.match(task[1])
+        is_half_comp = task[1].startswith(half_comp_pre)
         s = "  "
         if print_date:
             s += f"{task[0].strftime(date_format)} "
-        if half_completion_pos:
+        if is_half_comp:
             s += "\033[0;32m" + "[O]" + "\033[0;31m" + task[1][3:]
         else:
             s += task[1]
         print(s)
-
     print("\033[0;0m", end="")
 
     # completed
     printed = False
     print("\033[0;32m", end="")
-
     for task in completed:
         if print_today and task[0] < today:
             break
@@ -131,7 +129,6 @@ def main():
             s += f"{task[0].strftime(date_format)} "
         s += f"{task[1]}"
         print(s)
-
     print("\033[0;0m", end="")
     print()
 
