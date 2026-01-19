@@ -10,6 +10,8 @@ eat food
   # You better eat some food, this will make you feel so much better.
   # Such as grapes, mangoes, and apples
 
+[DISCARD]work out
+
 2024-11-18
 [OK]read a book
 install the curtains

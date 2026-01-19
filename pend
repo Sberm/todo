@@ -14,6 +14,7 @@ def main():
     parser.add_argument("-v", "--version", default = False, action = "store_true", help = "print current version")
     parser.add_argument("-d", "--date", default = False, action = "store_true", help = "print dates")
     parser.add_argument("-c", "--complete", default = False, action = "store_true", help = "only show completed tasks")
+    parser.add_argument("--discard", default = False, action = "store_true", help = "only show discarded tasks")
 
     args = parser.parse_args()
 
@@ -22,10 +23,11 @@ def main():
         exit(0)
 
     todo_file = args.input
-    only_pending = args.pending
     print_today = not args.all
     print_date = args.date
+    only_pending = args.pending
     only_complete = args.complete
+    only_discard = args.discard
 
     f = None
     try:
@@ -37,10 +39,12 @@ def main():
     date_pat = re.compile(r"^([0-9]{4,5}-[0-9]{1,2}-[0-9]{1,2}).*$")
     comp_pre = '[OK]'
     half_comp_pre = '[O]'
+    discard_pre = '[DISCARD]'
 
     # (date, time)
     pending = []
     completed = []
+    discarded = []
 
     date_format = "%Y-%m-%d"
 
@@ -52,6 +56,10 @@ def main():
     f.close()
 
     append = ""
+
+    collect_completed = not (only_pending or only_discard)
+    collect_discarded = not (only_pending or only_complete)
+    collect_pending = not (only_complete or only_discard)
 
     for line in lines:
         line = line.strip("\n\r")
@@ -84,19 +92,22 @@ def main():
                 append = ""
 
             if line.startswith(comp_pre):
-                if not only_pending:
+                if collect_completed:
                     completed.append((date_tmp, line))
-            else:
-                if not only_complete:
-                    pending.append((date_tmp, line))
+            elif line.startswith(discard_pre):
+                if collect_discarded:
+                    discarded.append((date_tmp, line))
+            elif collect_pending:
+                pending.append((date_tmp, line))
 
     # avoid extra newlines
-    if len(pending) == 0 and len(completed) == 0:
+    if len(pending) == 0 and len(completed) == 0 and len(discarded) == 0:
         print("No todo items found")
         return
 
     # pending (not completed)
-    print()
+    if len(pending) > 0:
+        print()
     print("\033[0;31m", end="")
     for task in pending:
         if print_today and task[0] < today:
@@ -113,17 +124,26 @@ def main():
     print("\033[0;0m", end="")
 
     # completed
-    printed = False
+    if len(completed) > 0:
+        print()
     print("\033[0;32m", end="")
     for task in completed:
         if print_today and task[0] < today:
             break
+        s = "  "
+        if print_date:
+            s += f"{task[0].strftime(date_format)} "
+        s += f"{task[1]}"
+        print(s)
+    print("\033[0;0m", end="")
 
-        # if any completed tasks need printing, print newline first
-        if not printed:
-            print()
-
-        printed = True
+    # discarded
+    if len(discarded) > 0:
+        print()
+    print("\033[0;33m", end="")
+    for task in discarded:
+        if print_today and task[0] < today:
+            break
         s = "  "
         if print_date:
             s += f"{task[0].strftime(date_format)} "
