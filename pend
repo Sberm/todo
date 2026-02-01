@@ -15,6 +15,7 @@ def main():
     parser.add_argument("-d", "--date", default = False, action = "store_true", help = "print dates")
     parser.add_argument("-c", "--complete", default = False, action = "store_true", help = "only show completed tasks")
     parser.add_argument("--discard", default = False, action = "store_true", help = "only show discarded tasks")
+    parser.add_argument("--indent", default="  ", help = "indentation string, default is 2 spaces")
 
     args = parser.parse_args()
 
@@ -28,6 +29,7 @@ def main():
     only_pending = args.pending
     only_complete = args.complete
     only_discard = args.discard
+    indent = args.indent
 
     f = None
     try:
@@ -106,6 +108,13 @@ def main():
         return
 
     # pending (not completed)
+
+    # Master - Slave
+    # Todo Master
+    #   Todo Slave 1
+    #   Todo Slave 2
+    #   Todo Slave 3
+
     if len(pending) > 0:
         print()
     print("\033[0;31m", end="")
@@ -113,14 +122,14 @@ def main():
         if print_today and task[0] < today:
             break
         is_half_comp = task[1].startswith(half_comp_pre)
-        s = "  "
+        s = ""
         if print_date:
             s += f"{task[0].strftime(date_format)} "
         if is_half_comp:
             s += "\033[0;32m" + "[O]" + "\033[0;31m" + task[1][3:]
         else:
             s += task[1]
-        print(s)
+        print(indent, s)
     print("\033[0;0m", end="")
 
     # completed
@@ -130,11 +139,11 @@ def main():
     for task in completed:
         if print_today and task[0] < today:
             break
-        s = "  "
+        s = ""
         if print_date:
             s += f"{task[0].strftime(date_format)} "
         s += f"{task[1]}"
-        print(s)
+        print(indent, s)
     print("\033[0;0m", end="")
 
     # discarded
@@ -144,11 +153,11 @@ def main():
     for task in discarded:
         if print_today and task[0] < today:
             break
-        s = "  "
+        s = ""
         if print_date:
             s += f"{task[0].strftime(date_format)} "
         s += f"{task[1]}"
-        print(s)
+        print(indent, s)
     print("\033[0;0m", end="")
     print()
 
