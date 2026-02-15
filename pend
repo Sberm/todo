@@ -5,7 +5,7 @@ from datetime import datetime
 from sys import exit
 from enum import Enum
 
-VERSION = r"0.0.6"
+VERSION = r"0.0.7"
 
 class State(Enum):
     PENDING = 1
