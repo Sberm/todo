@@ -1,5 +1,10 @@
 ## todo
 
+[![version][version-badge]][version-url]
+
+[version-badge]: https://img.shields.io/github/v/release/sberm/todo?color=blue
+[version-url]: https://github.com/Sberm/todo/releases
+
 A todo file format and a summary script. Check out `todo.txt`, `todo2.txt`, `todo-exp1.txt`, `todo-exp2.txt` for examples.
 
 ### Installation
