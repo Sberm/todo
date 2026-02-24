@@ -1,0 +1,1 @@
+Add an uninstallation script
