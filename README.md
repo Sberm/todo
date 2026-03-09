@@ -58,5 +58,5 @@ watch -n 0.5 -d --color pend
 
 ### Uninstallation
 ```
-rm -rf /usr/local/bin/pend
+./uninstall.sh
 ```
