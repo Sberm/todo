@@ -127,14 +127,14 @@ def main():
                 if not multi_line_cmt:
                     append += line[:-1] # exclude the backslash
                 continue
-            # first non-backslash-ended item: build the result
-            if len(append) != 0:
-                line = append + line
-                append = ""
             # multi-line comment ends
             if multi_line_cmt:
                 multi_line_cmt = False
                 continue
+            # first non-backslash-ended item: build the result
+            if len(append) != 0:
+                line = append + line
+                append = ""
 
             if line.startswith(comp_pre):
                 if collect_completed:
