@@ -97,11 +97,16 @@ def main():
         else:
             discarded.append(todo_store)
 
+    multi_line_cmt = False
+
     for line in lines:
         line = line.strip("\n\r")
 
         first_hash = line.find('#')
         if first_hash != -1:
+            # multi-line comment starts
+            if line[-1] == '\\':
+                multi_line_cmt = True
             line = line[:first_hash]
 
         if len(line) == 0 or line.isspace():
@@ -119,13 +124,17 @@ def main():
 
             # multi-line
             if line[-1] == '\\':
-                append += line[:-1] # exclude the backslash
+                if not multi_line_cmt:
+                    append += line[:-1] # exclude the backslash
                 continue
-
             # first non-backslash-ended item: build the result
             if len(append) != 0:
                 line = append + line
                 append = ""
+            # multi-line comment ends
+            if multi_line_cmt:
+                multi_line_cmt = False
+                continue
 
             if line.startswith(comp_pre):
                 if collect_completed:
