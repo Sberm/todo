@@ -86,6 +86,11 @@ def main():
     collect_discarded = not (only_pending or only_complete)
     collect_pending = not (only_complete or only_discard)
 
+    green = "\033[0;32m"
+    yellow = "\033[0;33m"
+    red = "\033[0;31m"
+    reset = "\033[0;0m"
+
     def store_todo(todo_store: TodoStore, state: State):
         if todo_store is None:
             raise RuntimeError("This todo store is empty")
@@ -182,7 +187,7 @@ def main():
     # pending (not completed)
     if len(pending) > 0:
         print()
-    print("\033[0;31m", end="")
+    print(red, end="")
     for todo_store in pending:
         for task in todo_store.arr:
             if print_today and task[0] < today:
@@ -205,26 +210,26 @@ def main():
 
             s += ws
             if content.startswith(comp_pre):
-                s += "\033[0;32m"
+                s += green
                 s += content
-                s += "\033[0;0m"
+                s += reset
             elif content.startswith(discard_pre):
-                s += "\033[0;33m"
+                s += yellow
                 s += content
-                s += "\033[0;0m"
+                s += reset
             elif content.startswith(half_comp_pre):
-                s += "\033[0;32m" + "[O]" + "\033[0;31m" + content[3:]
+                s += green + "[O]" + red + content[3:]
             else:
-                s += "\033[0;31m"
+                s += red
                 s += content
-                s += "\033[0;0m"
+                s += reset
             print(indent, s, sep="")
-    print("\033[0;0m", end="")
+    print(reset, end="")
 
     # completed
     if len(completed) > 0:
         print()
-    print("\033[0;32m", end="")
+    print(green, end="")
     for todo_store in completed:
         for task in todo_store.arr:
             if print_today and task[0] < today:
@@ -234,12 +239,12 @@ def main():
                 s += f"{task[0].strftime(date_format)} "
             s += f"{task[1]}"
             print(indent, s, sep="")
-    print("\033[0;0m", end="")
+    print(reset, end="")
 
     # discarded
     if len(discarded) > 0:
         print()
-    print("\033[0;33m", end="")
+    print(yellow, end="")
     for todo_store in discarded:
         for task in todo_store.arr:
             if print_today and task[0] < today:
@@ -249,7 +254,7 @@ def main():
                 s += f"{task[0].strftime(date_format)} "
             s += f"{task[1]}"
             print(indent, s, sep="")
-    print("\033[0;0m", end="")
+    print(reset, end="")
     print()
 
 if __name__ == "__main__":
