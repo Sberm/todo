@@ -12,6 +12,8 @@ eat food
 
 [DISCARD]work out
 
+[FUCK]Solve the hard math problem
+
 2024-11-18
 [OK]read a book
 install the curtains
