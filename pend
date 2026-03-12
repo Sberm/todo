@@ -8,9 +8,10 @@ from enum import Enum
 VERSION = r"0.0.8"
 
 class State(Enum):
-    PENDING = 1
+    PENDING   = 1
     DISCARDED = 2
     COMPLETED = 3
+    FUCK      = 4
 
 class TodoStore:
     def __init__(self, master: tuple[2]):
@@ -34,6 +35,7 @@ def main():
     parser.add_argument("-v", "--version", default = False, action = "store_true", help = "print current version")
     parser.add_argument("-d", "--date", default = False, action = "store_true", help = "print dates")
     parser.add_argument("-c", "--complete", default = False, action = "store_true", help = "only show completed tasks")
+    parser.add_argument("-f", "--fuck", default = False, action = "store_true", help = "only show fucked tasks")
     parser.add_argument("--discard", default = False, action = "store_true", help = "only show discarded tasks")
     parser.add_argument("--indent", default="  ", help = "indentation string, default is 2 spaces")
 
@@ -49,6 +51,7 @@ def main():
     only_pending = args.pending
     only_complete = args.complete
     only_discard = args.discard
+    only_fucked = args.fuck
     indent = args.indent
 
     f = None
@@ -58,15 +61,17 @@ def main():
         print(f"failed to open todo file \"{todo_file}\"")
         exit(1)
 
-    date_pat = re.compile(r"^([0-9]{4,5}-[0-9]{1,2}-[0-9]{1,2}).*$")
-    comp_pre = '[OK]'
+    date_pat      = re.compile(r"^([0-9]{4,5}-[0-9]{1,2}-[0-9]{1,2}).*$")
+    comp_pre      = '[OK]'
     half_comp_pre = '[O]'
-    discard_pre = '[DISCARD]'
+    discard_pre   = '[DISCARD]'
+    fuck_pre      = '[FUCK]'
 
     # [ TodoStore ]
-    pending = []
+    pending   = []
     completed = []
     discarded = []
+    fucked    = []
 
     date_format = "%Y-%m-%d"
 
@@ -82,14 +87,16 @@ def main():
     todo_store_t = None
     append = ""
 
-    collect_completed = not (only_pending or only_discard)
-    collect_discarded = not (only_pending or only_complete)
-    collect_pending = not (only_complete or only_discard)
+    collect_completed = not (only_pending or only_discard or only_fucked)
+    collect_discarded = not (only_pending or only_complete or only_fucked)
+    collect_pending   = not (only_complete or only_discard or only_fucked)
+    collect_fucked    = not (only_complete or only_discard or only_pending)
 
-    green = "\033[0;32m"
+    green  = "\033[0;32m"
     yellow = "\033[0;33m"
-    red = "\033[0;31m"
-    reset = "\033[0;0m"
+    red    = "\033[0;31m"
+    reset  = "\033[0;0m"
+    fuck   = "\033[38;5;171m"
 
     def store_todo(todo_store: TodoStore, state: State):
         if todo_store is None:
@@ -99,6 +106,8 @@ def main():
             pending.append(todo_store)
         elif state == State.COMPLETED:
             completed.append(todo_store)
+        elif state == State.FUCK:
+            fucked.append(todo_store)
         else:
             discarded.append(todo_store)
 
@@ -160,7 +169,16 @@ def main():
                             store_todo(todo_store, todo_store_t)
                         todo_store = TodoStore((date_tmp, line))
                         todo_store_t = State.DISCARDED
-            elif collect_pending:
+            elif line.startswith(fuck_pre):
+                if collect_fucked:
+                    if is_slave(line) and todo_store:
+                        todo_store.add((date_tmp, line))
+                    else:
+                        if todo_store:
+                            store_todo(todo_store, todo_store_t)
+                        todo_store = TodoStore((date_tmp, line))
+                        todo_store_t = State.FUCK
+            elif collect_pending: # pending
                 if is_slave(line) and todo_store:
                     todo_store.add((date_tmp, line))
                 else:
@@ -174,7 +192,7 @@ def main():
         store_todo(todo_store, todo_store_t)
 
     # avoid extra newlines
-    if len(pending) == 0 and len(completed) == 0 and len(discarded) == 0:
+    if len(pending) + len(completed) + len(discarded) + len(fucked) == 0:
         print("No todo items found")
         return
 
@@ -219,6 +237,10 @@ def main():
                 s += reset
             elif content.startswith(half_comp_pre):
                 s += green + "[O]" + red + content[3:]
+            elif content.startswith(fuck_pre):
+                s += fuck
+                s += content
+                s += reset
             else:
                 s += red
                 s += content
@@ -255,6 +277,22 @@ def main():
             s += f"{task[1]}"
             print(indent, s, sep="")
     print(reset, end="")
+
+    # fucked
+    if len(fucked) > 0:
+        print()
+    print(fuck, end="")
+    for todo_store in fucked:
+        for task in todo_store.arr:
+            if print_today and task[0] < today:
+                break
+            s = ""
+            if print_date:
+                s += f"{task[0].strftime(date_format)} "
+            s += f"{task[1]}"
+            print(indent, s, sep="")
+    print(reset, end="")
+
     print()
 
 if __name__ == "__main__":
