@@ -10,9 +10,13 @@ eat food
   # You better eat some food, this will make you feel so much better.
   # Such as grapes, mangoes, and apples
 
+[O]This is a half-complete task
+
 [DISCARD]work out
 
 [FUCK]Solve the hard math problem
+
+[OPTIONAL]This is an optional task
 
 2024-11-18
 [OK]read a book
