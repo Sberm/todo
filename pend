@@ -66,6 +66,7 @@ def main():
     half_comp_pre = '[O]'
     discard_pre   = '[DISCARD]'
     fuck_pre      = '[FUCK]'
+    optional_pre  = '[OPTIONAL]'
 
     # [ TodoStore ]
     pending   = []
@@ -87,16 +88,19 @@ def main():
     todo_store_t = None
     append = ""
 
-    collect_completed = not (only_pending or only_discard or only_fucked)
-    collect_discarded = not (only_pending or only_complete or only_fucked)
-    collect_pending   = not (only_complete or only_discard or only_fucked)
-    collect_fucked    = not (only_complete or only_discard or only_pending)
+    any_only = only_complete or only_pending or only_discard or only_fucked
 
-    green  = "\033[0;32m"
-    yellow = "\033[0;33m"
-    red    = "\033[0;31m"
-    reset  = "\033[0;0m"
-    fuck   = "\033[38;5;171m"
+    collect_completed = not any_only or only_complete
+    collect_discarded = not any_only or only_discard
+    collect_pending   = not any_only or only_pending
+    collect_fucked    = not any_only or only_fucked
+
+    green      = "\033[0;32m"
+    yellow     = "\033[0;33m"
+    red        = "\033[0;31m"
+    reset      = "\033[0;0m"
+    fuck       = "\033[38;5;171m"
+    optional   = "\033[0;37m"
 
     def store_todo(todo_store: TodoStore, state: State):
         if todo_store is None:
@@ -108,8 +112,10 @@ def main():
             completed.append(todo_store)
         elif state == State.FUCK:
             fucked.append(todo_store)
-        else:
+        elif state == State.DISCARDED:
             discarded.append(todo_store)
+        else:
+            raise RuntimeError("Incorrect state")
 
     multi_line_cmt = False
 
@@ -192,7 +198,10 @@ def main():
         store_todo(todo_store, todo_store_t)
 
     # avoid extra newlines
-    if len(pending) + len(completed) + len(discarded) + len(fucked) == 0:
+    is_empty = len(pending) + len(completed) + len(discarded) + \
+               len(fucked) + len(optional) \
+               == 0
+    if is_empty:
         print("No todo items found")
         return
 
@@ -236,11 +245,13 @@ def main():
                 s += content
                 s += reset
             elif content.startswith(half_comp_pre):
-                s += green + "[O]" + red + content[3:]
+                s += green + half_comp_pre + red + content[len(half_comp_pre):]
             elif content.startswith(fuck_pre):
                 s += fuck
                 s += content
                 s += reset
+            elif content.startswith(optional_pre):
+                s += optional + optional_pre + red + content[len(optional_pre):]
             else:
                 s += red
                 s += content
